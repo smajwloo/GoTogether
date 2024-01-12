@@ -1,34 +1,30 @@
 package main
 
 import (
-	"errors"
-	"io/fs"
-	"os"
+	"log"
 	"strconv"
 	"strings"
 )
 
+var writtenNumbers = strings.NewReplacer("one", "1", "two", "2", "three", "3", "four", "4", "five", "5", "six", "6", "seven", "7", "eight", "8", "nine", "9")
 var total int
-
-func getInput() []byte {
-	fsys := os.DirFS("resources")
-
-	if calibrationsArray, err := fs.ReadFile(fsys, "input.txt"); err != nil {
-		_ = errors.New("error reading input.txt")
-		return nil
-	} else {
-		return calibrationsArray
-	}
-}
 
 func calculateCalibration(calibrationsArray []byte) {
 	calibrationsString := string(calibrationsArray)
 	calibrations := strings.Split(calibrationsString, "\n")
 
 	for _, calibration := range calibrations {
-		numbers := extractNumbers(calibration)
+		log.Println(calibration)
+		newCalibration := replaceWrittenNumbers(calibration)
+		log.Println(newCalibration)
+		numbers := extractNumbers(newCalibration)
 		calculateTotal(numbers)
 	}
+}
+
+func replaceWrittenNumbers(calibration string) string {
+	replacedCalibration := calibration
+	return writtenNumbers.Replace(replacedCalibration)
 }
 
 func extractNumbers(calibration string) []int {
