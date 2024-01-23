@@ -6,7 +6,17 @@ import (
 	"strings"
 )
 
-var writtenNumbers = strings.NewReplacer("one", "1", "two", "2", "three", "3", "four", "4", "five", "5", "six", "6", "seven", "7", "eight", "8", "nine", "9")
+var writtenNumbers = map[string]string{
+	"one":   "1",
+	"two":   "2",
+	"three": "3",
+	"four":  "4",
+	"five":  "5",
+	"six":   "6",
+	"seven": "7",
+	"eight": "8",
+	"nine":  "9",
+}
 var total int
 
 func calculateCalibration(calibrationsArray []byte) {
@@ -18,13 +28,23 @@ func calculateCalibration(calibrationsArray []byte) {
 		newCalibration := replaceWrittenNumbers(calibration)
 		log.Println(newCalibration)
 		numbers := extractNumbers(newCalibration)
+		log.Println(numbers)
 		calculateTotal(numbers)
 	}
 }
 
 func replaceWrittenNumbers(calibration string) string {
 	replacedCalibration := calibration
-	return writtenNumbers.Replace(replacedCalibration)
+
+	for key, value := range writtenNumbers {
+		if !strings.Contains(replacedCalibration, key) {
+			continue
+		}
+
+		value = string(key[0]) + value + string(key[len(key)-1])
+		replacedCalibration = strings.ReplaceAll(replacedCalibration, key, value)
+	}
+	return replacedCalibration
 }
 
 func extractNumbers(calibration string) []int {
