@@ -3,7 +3,7 @@ package main
 import "log"
 
 func main() {
-	input := getInput()
+	input := readFile()
 	calculateCalibration(input)
 
 	log.Println(total)

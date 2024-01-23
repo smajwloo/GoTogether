@@ -1,34 +1,50 @@
 package main
 
 import (
-	"errors"
-	"io/fs"
-	"os"
+	"log"
 	"strconv"
 	"strings"
 )
 
-var total int
-
-func getInput() []byte {
-	fsys := os.DirFS("resources")
-
-	if calibrationsArray, err := fs.ReadFile(fsys, "input.txt"); err != nil {
-		_ = errors.New("error reading input.txt")
-		return nil
-	} else {
-		return calibrationsArray
-	}
+var writtenNumbers = map[string]string{
+	"one":   "1",
+	"two":   "2",
+	"three": "3",
+	"four":  "4",
+	"five":  "5",
+	"six":   "6",
+	"seven": "7",
+	"eight": "8",
+	"nine":  "9",
 }
+var total int
 
 func calculateCalibration(calibrationsArray []byte) {
 	calibrationsString := string(calibrationsArray)
 	calibrations := strings.Split(calibrationsString, "\n")
 
 	for _, calibration := range calibrations {
-		numbers := extractNumbers(calibration)
+		log.Println(calibration)
+		newCalibration := replaceWrittenNumbers(calibration)
+		log.Println(newCalibration)
+		numbers := extractNumbers(newCalibration)
+		log.Println(numbers)
 		calculateTotal(numbers)
 	}
+}
+
+func replaceWrittenNumbers(calibration string) string {
+	replacedCalibration := calibration
+
+	for key, value := range writtenNumbers {
+		if !strings.Contains(replacedCalibration, key) {
+			continue
+		}
+
+		value = string(key[0]) + value + string(key[len(key)-1])
+		replacedCalibration = strings.ReplaceAll(replacedCalibration, key, value)
+	}
+	return replacedCalibration
 }
 
 func extractNumbers(calibration string) []int {
