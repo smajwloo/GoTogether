@@ -6,25 +6,25 @@ import (
 	"strings"
 )
 
-// TODO: Remove parts that come from part 1, these are not needed anymore
-var colors = map[string]int{
-	"red":   12,
-	"green": 13,
-	"blue":  14,
-}
+var total int
 
-func checkGamePossibility(rounds []string) bool {
-	power := 0
-	for _, round := range rounds {
-		if !checkRoundPossibility(round, power) {
-			return false
-		}
+func calculatePowerOfGame(rounds []string) {
+	var colors = map[string]int{
+		"red":   -1,
+		"green": -1,
+		"blue":  -1,
 	}
-	return true
+	var power = 0
+	for _, round := range rounds {
+		calculateMinimalValue(round, colors)
+	}
+	power = calculatePowerOfCubes(colors, power)
+	log.Println("Power", power)
+	total += power
 }
 
-func checkRoundPossibility(round string, power int) bool {
-	for color, maxValue := range colors {
+func calculateMinimalValue(round string, colors map[string]int) {
+	for color, lowestValue := range colors {
 		if strings.Contains(round, color) {
 			first := strings.Split(round, " "+color)[0]
 			second := strings.Split(first, " ")
@@ -36,17 +36,12 @@ func checkRoundPossibility(round string, power int) bool {
 				log.Println("Error converting red amount to int", err)
 				continue
 			}
-			if amount > maxValue {
-				return false
+
+			if amount > lowestValue {
+				colors[color] = amount
 			}
-
-			currentAmounts := getLowerNumber(amount)
-			power = calculatePowerOfCubes(currentAmounts, power)
-			log.Println("Power", power)
 		}
-
 	}
-	return true
 }
 
 func calculatePowerOfCubes(currentAmounts map[string]int, power int) int {
@@ -58,15 +53,4 @@ func calculatePowerOfCubes(currentAmounts map[string]int, power int) int {
 		}
 	}
 	return power
-}
-
-func getLowerNumber(currentAmount int) map[string]int {
-	currentAmounts := colors
-	for color, amount := range currentAmounts {
-		if currentAmount < amount {
-			currentAmounts[color] = currentAmount
-			log.Println("Current amount", currentAmount)
-		}
-	}
-	return currentAmounts
 }
