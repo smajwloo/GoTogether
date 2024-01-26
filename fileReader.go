@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+var symbols = make([]Symbol, 0)
+
 func getInput() []string {
 	fsys := os.DirFS("resources")
 
@@ -16,4 +18,24 @@ func getInput() []string {
 	} else {
 		return strings.Split(string(lines), "\n")
 	}
+}
+
+func getSymbols(lines []string) {
+	for lineNumber, line := range lines {
+		for colIndex, char := range line {
+			if isSymbol(char) {
+				symbols = append(symbols, Symbol{Char: string(char), Line: lineNumber, Col: colIndex})
+			}
+		}
+	}
+}
+
+func isSymbol(char rune) bool {
+	symbols := []rune{'%', '#', '$', '&', '@', '=', '-', '+', '/', '*'}
+	for _, symbol := range symbols {
+		if char == symbol {
+			return true
+		}
+	}
+	return false
 }
